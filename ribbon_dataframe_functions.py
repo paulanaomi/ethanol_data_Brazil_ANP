@@ -43,3 +43,21 @@ def create_df_with_yearly_data(year_start, year_end,df,col_name,Nvals):
                         final_df.at[pos,field] = record.loc[record[col_name].index.tolist()[0]][col_name]
 
     return final_df
+
+
+def create_ribbon_chart_df (df):
+    ribbon_chart_df = df[['name', 'cnpj']]
+
+    years = df.columns.tolist()[2:]
+
+    for i, col in enumerate(years):
+
+        ch1 = df.loc[:,['cnpj',col]]
+        ch1.sort_values(str(col), inplace=True)
+        ch1[f'y{i}_upper'] = ch1[col].cumsum()
+        ch1[f'y{i}_lower'] = ch1[f'y{i}_upper'].shift(1)
+        ch1 = ch1.fillna(0)
+        ch1[f'y{i}'] = ch1.apply(lambda x: (x[f'y{i}_upper'] + x[f'y{i}_lower'])/2, axis=1)
+        ribbon_chart_df = ribbon_chart_df.merge(ch1.iloc[:, [0, 2, 3, 4]], on='cnpj')
+
+    return ribbon_chart_df
