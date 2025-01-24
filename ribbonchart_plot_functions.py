@@ -32,13 +32,13 @@ def get_smoothened_points(x,sub=0.1, axis='x'):
     return temp
 
 
-def plot_ribbon_chart(df,colors_dict):
+def plot_ribbon_chart(df,colors_dict,chart_title):
 
     ribbon_chart_df = create_ribbon_chart_df(df)
 
     years = df.columns.tolist()[2:]
 
-    colors2 =[i for i in colors_dict.values()]
+    #colors2 =[i for i in colors_dict.values()]
 
     df_name_cnpj = df[['name','cnpj']]
     x = [int(i) for i in years]
@@ -52,6 +52,7 @@ def plot_ribbon_chart(df,colors_dict):
     # Ribbons
     for i, cnpj in enumerate(df.cnpj):
 
+        color = colors_dict[ribbon_chart_df[ribbon_chart_df['cnpj'] == cnpj].name.tolist()[0]]
         upper_col, lower_col, annotate_place = getupperlower(cnpj,ribbon_chart_df)
         y_upper = get_smoothened_points(upper_col,axis='y')
         y_lower = get_smoothened_points(lower_col,axis='y')
@@ -60,7 +61,7 @@ def plot_ribbon_chart(df,colors_dict):
             x=x+[x[-1]+1, x[-1]+1]+x_rev,
             y=y_upper+[y_upper[-1], y_lower[0]]+y_lower,
             fill='toself',
-            fillcolor=colors2[i],
+            fillcolor=color,
             opacity=0.5,
             line_color='rgba(0,0,0,0.2)',
             showlegend=False,
@@ -73,7 +74,7 @@ def plot_ribbon_chart(df,colors_dict):
                                 x=-0.005, y=annotate_place,
                                 text=get_name(df_name_cnpj,cnpj),align="right",xanchor='right',
                                 font=dict(family='Arial', size=14,
-                                          color=colors2[i]),
+                                          color=color),
                                 showarrow=False))
 
     # Bars
@@ -102,6 +103,6 @@ def plot_ribbon_chart(df,colors_dict):
 
     fig.update_yaxes(range=[0,30000],showticklabels=True, showgrid=False, fixedrange=True)
     fig.update_layout(annotations=annotations)
-    fig.update_layout(title='Top 5 bioethanol plants in terms of capacity (2020 ~ 2024)')
+    fig.update_layout(title=chart_title)
 
-    fig.show()
+    return fig
