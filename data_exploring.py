@@ -2,7 +2,7 @@ import numpy as np
 
 def get_labels(df, col_name, Nvals):
 
-    bar_labels = df.sort_values(by=[col_name], ascending=False)['name'].head(Nvals).tolist()
+    bar_labels = df.sort_values(by=[col_name], ascending=False)['company'].head(Nvals).tolist()
 
     labels = []
     for i, name in enumerate(bar_labels,start=1):
@@ -57,6 +57,7 @@ def subplot_bar_chart_capacities(ax,col_name,df,Nvals):
     bar_labels = get_labels(df,col_name,Nvals)
     bar_colors = get_label_colors(bar_labels)
 
+    bar_labels = df.sort_values(by=[col_name], ascending=False)['name'].head(Nvals).tolist()
     bar_chart = ax.bar(xvals , yvals, label = bar_labels, color = bar_colors)
     ax.bar_label(bar_chart, label_type='center')
     ax.legend(title='Key',fontsize=8)
