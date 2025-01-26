@@ -9,7 +9,9 @@ def getupperlower(cnpj, ribbon_chart_df):
     lower_col = [i for i in ch1.columns if 'lower' in i]
     upper_data = ch1[upper_col].values.tolist()[0]
     lower_data = ch1[lower_col].values.tolist()[0]
-    annotate_place = ch1['y0'].values.tolist()[0]
+
+    last_label = ribbon_chart_df.columns.tolist()[-1]
+    annotate_place = ch1[last_label].values.tolist()[0]
     return upper_data, lower_data, annotate_place
 
 
@@ -70,9 +72,18 @@ def plot_ribbon_chart(df,colors_dict,chart_title):
             mode='lines',
             hovertemplate=' '
         ))
+        fig.update_layout(
+            margin=dict(
+                l=200,
+                r=200,
+                b=100,
+                t=100,
+                pad=4
+            )
+        )
         annotations.append(dict(xref='paper', yref='y',
-                                x=-0.005, y=annotate_place,
-                                text=get_name(df_name_cnpj,cnpj),align="right",xanchor='right',
+                                x=1.001, y=annotate_place,
+                                text=get_name(df_name_cnpj,cnpj),align="left",xanchor='left',
                                 font=dict(family='Arial', size=14,
                                           color=color),
                                 showarrow=False))
