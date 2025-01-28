@@ -3,7 +3,7 @@ import pandas as pd
 
 import data_exploring as de
 
-def create_df_with_yearly_data(year_start, year_end,df,col_name,Nvals):
+def create_df_with_yearly_data(year_start, year_end,df,col_name,Nvals=-1):
 
     # merge data from over the years into a single dataframe
     for year in range(year_start,year_end+1):
@@ -15,12 +15,18 @@ def create_df_with_yearly_data(year_start, year_end,df,col_name,Nvals):
         df_temp = df_year[['name','cnpj',col_name]].sort_values(by=[col_name], ascending=False)
         #df_temp.drop(['date','state','capacity_anhydrous'], axis=1, inplace=True)
         df_temp.rename(columns={col_name:str(year)}, inplace=True)
-        df_temp  = df_temp.set_index(np.arange(N)).head(Nvals)
+        df_temp  = df_temp.set_index(np.arange(N))
+
+        if Nvals > 0:
+            df_temp = df_temp.head(Nvals)
 
         if 'final_df' in locals():
             final_df = pd.merge(final_df, df_temp[['cnpj',str(year)]], how='outer', on='cnpj')
         else:
             final_df = df_temp
+
+    if Nvals < 1:
+        return final_df
 
     # fills in NaN values
     for pos in range(len(final_df)):
